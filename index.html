@@ -2,10 +2,26 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Hola Mundo</title>
+    <title>Snake Game</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+        }
+        h1 {
+            margin-top: 20px;
+        }
+        canvas {
+            background: #000;
+            display: block;
+            margin: 20px auto;
+        }
+    </style>
 </head>
 <body>
-    <h1>¡Hola Mundo!</h1>
-    <p>Esta es mi primera página HTML.</p>
+    <h1>Snake Game</h1>
+    <canvas id="game" width="400" height="400"></canvas>
 </body>
 </html>
