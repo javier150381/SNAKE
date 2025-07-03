@@ -23,23 +23,32 @@
 <body>
     <h1>Snake Game</h1>
     <canvas id="game" width="400" height="400"></canvas>
+    <button id="restart" style="display:none;">Reiniciar</button>
     <script>
         const canvas = document.getElementById('game');
         const ctx = canvas.getContext('2d');
-         const grid = 20;
-         const cols = canvas.width / grid;
-         const rows = canvas.height / grid;
+        const restartBtn = document.getElementById('restart');
+        const grid = 20;
+        const cols = canvas.width / grid;
+        const rows = canvas.height / grid;
+        let snake = [];
+        let apple;
+        let dir;
+        let gameInterval;
+        restartBtn.addEventListener('click', startGame);
 
-        // Snake represented as an array of grid positions
-         const snake = [];
-         for (let i = 4; i >= 0; i--) {
-             snake.push({ x: i, y: 0 });
-         }
-
-         // Apple position
-         let apple = randomPosition();
-
-        let dir = { x: 1, y: 0 };
+        function startGame() {
+            snake = [];
+            for (let i = 4; i >= 0; i--) {
+                snake.push({ x: i, y: 0 });
+            }
+            apple = randomPosition();
+            dir = { x: 1, y: 0 };
+            draw();
+            clearInterval(gameInterval);
+            gameInterval = setInterval(update, 100);
+            restartBtn.style.display = 'none';
+        }
 
         // Draw the current state of the snake
          function draw() {
@@ -114,17 +123,15 @@
              return pos;
          }
 
-         let gameInterval = setInterval(update, 100);
-
-         function endGame() {
-             clearInterval(gameInterval);
-             ctx.fillStyle = 'white';
-             ctx.font = '40px Arial';
-             ctx.textAlign = 'center';
-             ctx.fillText('Game Over', canvas.width / 2, canvas.height / 2);
-         }
-
-         draw();
+        function endGame() {
+            clearInterval(gameInterval);
+            ctx.fillStyle = 'white';
+            ctx.font = '40px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Game Over', canvas.width / 2, canvas.height / 2);
+            restartBtn.style.display = 'block';
+        }
+        startGame();
     </script>
 </body>
 </html>
