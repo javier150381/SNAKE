@@ -23,5 +23,68 @@
 <body>
     <h1>Snake Game</h1>
     <canvas id="game" width="400" height="400"></canvas>
+    <script>
+        const canvas = document.getElementById('game');
+        const ctx = canvas.getContext('2d');
+        const grid = 20;
+        const cols = canvas.width / grid;
+        const rows = canvas.height / grid;
+
+        // Snake represented as an array of grid positions
+        const snake = [];
+        for (let i = 4; i >= 0; i--) {
+            snake.push({ x: i, y: 0 });
+        }
+
+        let dir = { x: 1, y: 0 };
+
+        // Draw the current state of the snake
+        function draw() {
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = 'green';
+            for (const part of snake) {
+                ctx.fillRect(part.x * grid, part.y * grid, grid - 1, grid - 1);
+            }
+        }
+
+        // Move the snake forward based on the current direction
+        function update() {
+            const head = {
+                x: snake[0].x + dir.x,
+                y: snake[0].y + dir.y
+            };
+
+            // Wrap around the edges of the canvas
+            head.x = (head.x + cols) % cols;
+            head.y = (head.y + rows) % rows;
+
+            snake.unshift(head);
+            snake.pop();
+            draw();
+        }
+
+        // Prevent the snake from reversing over itself
+        document.addEventListener('keydown', (e) => {
+            switch (e.key) {
+                case 'ArrowUp':
+                    if (dir.y !== 1) dir = { x: 0, y: -1 };
+                    break;
+                case 'ArrowDown':
+                    if (dir.y !== -1) dir = { x: 0, y: 1 };
+                    break;
+                case 'ArrowLeft':
+                    if (dir.x !== 1) dir = { x: -1, y: 0 };
+                    break;
+                case 'ArrowRight':
+                    if (dir.x !== -1) dir = { x: 1, y: 0 };
+                    break;
+            }
+        });
+
+        draw();
+        setInterval(update, 100);
+    </script>
 </body>
 </html>
