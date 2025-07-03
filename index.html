@@ -26,44 +26,64 @@
     <script>
         const canvas = document.getElementById('game');
         const ctx = canvas.getContext('2d');
-        const grid = 20;
-        const cols = canvas.width / grid;
-        const rows = canvas.height / grid;
+         const grid = 20;
+         const cols = canvas.width / grid;
+         const rows = canvas.height / grid;
 
         // Snake represented as an array of grid positions
-        const snake = [];
-        for (let i = 4; i >= 0; i--) {
-            snake.push({ x: i, y: 0 });
-        }
+         const snake = [];
+         for (let i = 4; i >= 0; i--) {
+             snake.push({ x: i, y: 0 });
+         }
+
+         // Apple position
+         let apple = randomPosition();
 
         let dir = { x: 1, y: 0 };
 
         // Draw the current state of the snake
-        function draw() {
-            ctx.fillStyle = '#000';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+         function draw() {
+             ctx.fillStyle = '#000';
+             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            ctx.fillStyle = 'green';
-            for (const part of snake) {
-                ctx.fillRect(part.x * grid, part.y * grid, grid - 1, grid - 1);
-            }
+             // Draw apple
+             ctx.fillStyle = 'red';
+             ctx.fillRect(apple.x * grid, apple.y * grid, grid - 1, grid - 1);
+
+             ctx.fillStyle = 'green';
+             for (const part of snake) {
+                 ctx.fillRect(part.x * grid, part.y * grid, grid - 1, grid - 1);
+             }
         }
 
         // Move the snake forward based on the current direction
-        function update() {
-            const head = {
-                x: snake[0].x + dir.x,
-                y: snake[0].y + dir.y
-            };
+         function update() {
+             const head = {
+                 x: snake[0].x + dir.x,
+                 y: snake[0].y + dir.y
+             };
 
-            // Wrap around the edges of the canvas
-            head.x = (head.x + cols) % cols;
-            head.y = (head.y + rows) % rows;
+             // Collision with walls
+             if (head.x < 0 || head.x >= cols || head.y < 0 || head.y >= rows) {
+                 endGame();
+                 return;
+             }
 
-            snake.unshift(head);
-            snake.pop();
-            draw();
-        }
+             // Collision with self
+             if (snake.some(part => part.x === head.x && part.y === head.y)) {
+                 endGame();
+                 return;
+             }
+
+             snake.unshift(head);
+
+             if (head.x === apple.x && head.y === apple.y) {
+                 apple = randomPosition();
+             } else {
+                 snake.pop();
+             }
+             draw();
+         }
 
         // Prevent the snake from reversing over itself
         document.addEventListener('keydown', (e) => {
@@ -83,8 +103,28 @@
             }
         });
 
-        draw();
-        setInterval(update, 100);
+         function randomPosition() {
+             let pos;
+             do {
+                 pos = {
+                     x: Math.floor(Math.random() * cols),
+                     y: Math.floor(Math.random() * rows)
+                 };
+             } while (snake.some(part => part.x === pos.x && part.y === pos.y));
+             return pos;
+         }
+
+         let gameInterval = setInterval(update, 100);
+
+         function endGame() {
+             clearInterval(gameInterval);
+             ctx.fillStyle = 'white';
+             ctx.font = '40px Arial';
+             ctx.textAlign = 'center';
+             ctx.fillText('Game Over', canvas.width / 2, canvas.height / 2);
+         }
+
+         draw();
     </script>
 </body>
 </html>
